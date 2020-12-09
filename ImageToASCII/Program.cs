@@ -64,7 +64,7 @@ namespace ImageToASCII
                 Environment.Exit(0);
             }
 
-            //Pobieram dokładność
+            //Pobieram dokładność i rozmiar obrazka
             int answer = 1;
             bool correctAnswer = false;
             while (!correctAnswer)
