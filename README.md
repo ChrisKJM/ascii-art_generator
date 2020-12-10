@@ -9,6 +9,7 @@ ASCII-art zapisywany jest do pliku image.txt w tym samym folderze co plik exe.
 
 W notepad++ wyświetla się dobrze, w notepad nie (przynajmniej mi). Innych edytorów tekstu nie testowałem.
 Sprawdzona czcionka: Courier new. Ważne, żeby używana czcionka miała stałą szerokość znaków.
+Te czcionki w teorii powinny działać: https://en.wikipedia.org/wiki/List_of_monospaced_typefaces
 
 Jeśli ASCII-art jest nie równy, to najprawdopodobniej kwestia czcionki lub zawijania linijek.
 
