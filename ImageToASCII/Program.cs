@@ -69,7 +69,7 @@ namespace ImageToASCII
             selectedCharSet = charSets[int.Parse(GetAnswer("Wybierz zestaw znaków.", charSets)) - 1];
 
             //Pobieram dokładność i rozmiar obrazka
-            res = GetAnswerInt("Podaj dokładność (a za razem rozmiar) obrazka w postaci liczby naturalnej.", 1, image.Width * image.Height);
+            res = GetAnswerInt("Podaj dokładność (a za razem rozmiar) obrazka w postaci liczby naturalnej.\n Im większa wartość tym mniejsza dokładność i rozmiar.", 1, image.Width * image.Height);
 
             grayscaleColorList = new Color[(int) Math.Ceiling(image.Width / (float)res),(int)Math.Ceiling(image.Height / (float)res)];
 
