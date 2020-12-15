@@ -48,6 +48,7 @@ namespace ImageToASCII
             Console.WriteLine("Wybierz plik graficzny do przerobienia.");
 
             DialogResult dialogResult = ofd.ShowDialog();
+            Console.WriteLine();
 
             //Tablica przechowujące kolory
             Color[,] grayscaleColorList;
