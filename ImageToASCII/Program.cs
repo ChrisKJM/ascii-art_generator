@@ -12,10 +12,6 @@ namespace ImageToASCII
     class Program
     {
         /*
-        Wprowadzenie:
-        Program jest konsolowy, ze względu na to, iż początkowym założeniem było wyświetlanie obrazu w konsoli.
-        Zrezygnowałem z tego, ze względu na możliwe wielkości niektórych obrazów.
-
         Program zamyka się automatycznie po wygenerowaniu obrazka i zamknięciu MessageBoxa.
         ASCII-art zapisywany jest do pliku image.txt w tym samym folderze co plik exe.
         Można wybrać 1 z 3 zestawów znaków (osobiście polecam ten pierwszy).
@@ -48,6 +44,8 @@ namespace ImageToASCII
 
             //Bitmapa (obrazek)
             Bitmap image = null;
+
+            Console.WriteLine("Wybierz plik graficzny do przerobienia.");
 
             DialogResult dialogResult = ofd.ShowDialog();
 
