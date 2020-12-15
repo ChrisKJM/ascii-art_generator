@@ -18,6 +18,7 @@ namespace ImageToASCII
 
         Program zamyka się automatycznie po wygenerowaniu obrazka i zamknięciu MessageBoxa.
         ASCII-art zapisywany jest do pliku image.txt w tym samym folderze co plik exe.
+        Można wybrać 1 z 3 zestawów znaków (osobiście polecam ten pierwszy).
 
         W notepad++ wyświetla się dobrze, w notepad nie (przynajmniej mi). Innych edytorów tekstu nie testowałem.
         Sprawdzona czcionka: Courier new. Ważne, żeby używana czcionka miała stałą szerokość znaków.
@@ -34,9 +35,13 @@ namespace ImageToASCII
         static void Main(string[] args)
         {
             //Zestawy znaków, jeden standardowy, drugi dla negatywu
-            string[] charList = { "@", "#", "$", "%", "&", "?", "<", "=", "+", "!", ";", "-", "*", "^", ",", " " };
-            string[] charListAlt = { " ", ",", "^", "*", "-", ";", "!", "+", "=", "<", "?", "&", "%", "$", "#", "@" };
-            
+            string[] charSets = new string[] { "@#$%&?<=+!;-*^, ", "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,\"^`'. ", "@%#*+=-:. " };
+            string selectedCharSet;
+
+            //Dokładność obrazka (dokładniej to pierwiastek z ilości px przypadających na jeden znak)
+            //1 to najdokładniejszy obrazek, im większa wartość tym mniej dokładny
+            int res;
+
             //Dialog odpowiedzialny za wybieranie pliku
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Filter = "Images|*.png;*.jpg;*.jpeg;*.jfif;*.tif;*.tiff;*.bmp";
@@ -48,10 +53,6 @@ namespace ImageToASCII
 
             //Tablica przechowujące kolory
             Color[,] grayscaleColorList;
-
-            //Dokładność obrazka (dokładniej to pierwiastek z ilości px przypadających na jeden znak)
-            //1 to najdokładniejszy obrazek, im większa wartość tym mniej dokładny
-            int res;
 
             //Pobieranie pliku
             if (dialogResult == DialogResult.OK)
@@ -65,27 +66,11 @@ namespace ImageToASCII
                 Environment.Exit(0);
             }
 
-            //Pobieram dokładność i rozmiar obrazka
-            int answer = 1;
-            bool correctAnswer = false;
-            while (!correctAnswer)
-            {
-                Console.WriteLine("Podaj dokładność (a za razem rozmiar) obrazka w postaci liczby naturalnej");
-                Console.WriteLine("(Im większa liczba tym mniejsza dokładność i mniejszy rozmiar, największa dokładność to 1)");
-                string response = Console.ReadLine();
-                try
-                {
-                    answer = int.Parse(response);
-                    if (answer < 1) Console.WriteLine("Liczba mniejsza od 1\n");
-                    else correctAnswer = true;
-                }
-                catch
-                {
-                    Console.WriteLine("Nie podano liczby\n");
-                }
-            }
+            //Pobieram wybrany zestaw znaków
+            selectedCharSet = charSets[int.Parse(GetAnswer("Wybierz zestaw znaków.", charSets)) - 1];
 
-            res = answer;
+            //Pobieram dokładność i rozmiar obrazka
+            res = GetAnswerInt("Podaj dokładność (a za razem rozmiar) obrazka w postaci liczby naturalnej.", 1, image.Width * image.Height);
 
             grayscaleColorList = new Color[(int) Math.Ceiling(image.Width / (float)res),(int)Math.Ceiling(image.Height / (float)res)];
 
@@ -106,7 +91,7 @@ namespace ImageToASCII
             }
 
             //Co ile odcieni szarości ma być nowy znak
-            int charStep = 256 / charList.Length;
+            int charStep = 256 / selectedCharSet.Length;
 
             //Usuwanie istniejącego pliku, otwieranie StreamWritera do edycji pliku
             string filePath = Environment.CurrentDirectory + @"\image.txt";
@@ -119,7 +104,9 @@ namespace ImageToASCII
             {
                 for (int j = 0; j < grayscaleColorList.GetLength(0); j++)
                 {
-                    sw.Write(charList[grayscaleColorList[j, i].R / charStep]);
+                    int index = grayscaleColorList[j, i].R / charStep;
+                    if (index > selectedCharSet.Length - 1) sw.Write(selectedCharSet[selectedCharSet.Length - 1]);
+                    else sw.Write(selectedCharSet[index]);
                 }
                 sw.WriteLine();
             }
@@ -128,7 +115,7 @@ namespace ImageToASCII
         }
 
         //Zwraca średni kolor pixeli o pozycji między (x, y) oraz (x + sizeX, y + sizeY)
-        static private Color GetAveragePixelColor(Bitmap bitmap, int x, int y, int sizeX, int sizeY)
+        private static Color GetAveragePixelColor(Bitmap bitmap, int x, int y, int sizeX, int sizeY)
         {
             int rAvg = 0, gAvg = 0, bAvg = 0;
 
@@ -150,6 +137,67 @@ namespace ImageToASCII
             bAvg /= sizeSq;
 
             return Color.FromArgb(rAvg, gAvg, bAvg);
+        }
+
+        private static string GetAnswer(string question, string[] answers = null)
+        {
+            if (answers != null)
+            {
+                bool correctAnswer = false;
+                int answer = 0;
+                while (!correctAnswer)
+                {
+                    Console.WriteLine(question);
+                    Console.WriteLine("Wpisz znak odpowiadający danej odpowiedzi i zatwierdź enterem.");
+                    for (int i = 0; i < answers.Length; i++) Console.WriteLine($"{i + 1}. {answers[i]}");
+                    string response = Console.ReadLine();
+
+                    try
+                    {
+                        answer = int.Parse(response);
+                        if (answer < 1 || answer > answers.Length) Console.WriteLine("Nieprawidłowa liczba\n");
+                        else correctAnswer = true;
+                    }
+                    catch
+                    {
+                        Console.WriteLine("Nie podano liczby\n");
+                    }
+                }
+                Console.WriteLine();
+                return answer.ToString();
+            }
+            else
+            {
+                Console.WriteLine(question);
+                string response = Console.ReadLine();
+                Console.WriteLine();
+                return response;
+            }
+        }
+
+        private static int GetAnswerInt(string question, int min = int.MinValue, int max = int.MaxValue)
+        {
+            bool correctAnswer = false;
+            int answer = 0;
+            while (!correctAnswer)
+            {
+                Console.WriteLine(question);
+                Console.WriteLine($"Wpisz liczbę całkowitą między {min} a {max} (włącznie).");
+                string response = Console.ReadLine();
+
+                try
+                {
+                    answer = int.Parse(response);
+                    if (answer < min || answer > max) Console.WriteLine("Nieprawidłowa liczba\n");
+                    else correctAnswer = true;
+                }
+                catch
+                {
+                    Console.WriteLine("Nie podano liczby\n");
+                }
+            }
+            Console.WriteLine();
+            return answer;
         }
     }
 }
