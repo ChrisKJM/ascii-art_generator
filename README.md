@@ -6,6 +6,7 @@ Zrezygnowałem z tego, ze względu na możliwe wielkości niektórych obrazów.
 
 Program zamyka się automatycznie po wygenerowaniu obrazka i zamknięciu MessageBoxa.
 ASCII-art zapisywany jest do pliku image.txt w tym samym folderze co plik exe.
+Można wybrać 1 z 3 zestawów znaków (osobiście polecam ten pierwszy).
 
 W notepad++ wyświetla się dobrze, w notepad nie (przynajmniej mi). Innych edytorów tekstu nie testowałem.
 Sprawdzona czcionka: Courier new. Ważne, żeby używana czcionka miała stałą szerokość znaków.
